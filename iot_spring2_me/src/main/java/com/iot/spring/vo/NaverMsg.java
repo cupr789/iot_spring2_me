@@ -19,7 +19,7 @@ public class NaverMsg {
 		return "NaverMsg [message=" + message + "]";
 	}
 	
-	@JsonIgnoreProperties(ignoreUnknown =true)
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public class Message{
 		private Result result;
 
@@ -30,7 +30,7 @@ public class NaverMsg {
 		public void setResult(Result result) {
 			this.result = result;
 		}
-		@JsonIgnoreProperties(ignoreUnknown =true)
+		@JsonIgnoreProperties(ignoreUnknown=true)
 		public class Result{
 			private String translatedText;
 

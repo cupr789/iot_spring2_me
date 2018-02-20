@@ -33,7 +33,7 @@ public class ConnectionInfoController {
 	public @ResponseBody Map<String,Object> getConnectionList(HttpSession hs,Map<String,Object>map){
 		UserInfoVO ui = new UserInfoVO();
 		if(hs.getAttribute("user")!=null) {
-			ui = (UserInfoVO)hs.getAttribute("user");
+			ui.setUiId(hs.getAttribute("user").toString());
 		}else {
 			ui.setUiId("red");
 		}
@@ -71,6 +71,7 @@ public class ConnectionInfoController {
 			HttpSession hs,
 			Map<String,Object> map) {
 		List<TableVO> tableList = cis.getTableList(hs, dbName);
+		log.info("????!! => {}",tableList);
 		map.put("list", tableList);
 		map.put("parentId", parentId);
 		return map;
@@ -98,7 +99,9 @@ public class ConnectionInfoController {
 		//cis.getColumnList(hs, map)
 		return map;
 	}
-	@RequestMapping(value="/sendSql/{sendSQL}", method=RequestMethod.GET)
+	
+	
+	@RequestMapping(value="/sendSql/{sendSQL}", method=RequestMethod.POST)
 	public @ResponseBody Map<String,Object> getSqlResult(
 			@PathVariable("sendSQL")String sendSQL,
 			HttpSession hs,
@@ -106,9 +109,12 @@ public class ConnectionInfoController {
 		if(sendSQL!=null) {
 			log.info("받아온 질의문이 뭐야?? =>{}",sendSQL);
 		}
-		List<Object> excuteResult = cis.getSqlResultList(hs, sendSQL);
-		log.info("제발 시발 =>{}",excuteResult);
-		/*List<TableVO> tableList = cis.getTableList(hs, dbName);*/
+		
+		List<Object> excuteResult = cis.getSqlResultList(hs, sendSQL);  // delete from user_info where uiNo=3;
+																		// update user_info set uiName='ㅋ카' where uiName='홍길동';
+/*		if(sendSQL.indexOf("delete")!=-1 || sendSQL.indexOf("update")!=-1) {
+			excuteResult = cis.getSqlResultList(hs, "select * from ");
+		}*/
 		map.put("list", excuteResult);
 		return map;
 	}

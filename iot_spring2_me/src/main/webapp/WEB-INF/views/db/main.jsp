@@ -43,6 +43,7 @@ var bodyLayout, dbTree,winF,popW;
 var aLay, bLay, cLay;
 var bTabs, bTab1, bTab2, bTab3;
 var tableInfoGrid;
+var logDiv;
 function columnListCB(res){
 	if(res.errorMsg){
 		alert(res.errorMsg);
@@ -130,20 +131,17 @@ function dbListCB(res){
 
 
 function queryResult(res){
-/* 	for(var listPart of res.list){
-		var part = JSON.stringify(listPart);
-		var part1 = JSON.parse(part);
-		console.log(part);
-	} */
+	if(res.errorMsg){
+		alert(res.errorMsg);
+	}
 	if(res.list){	
 		queryGrid = cLay.attachGrid();
 		var columns = res.list[0];
 		var headerStr = "";
 		var colTypeStr = "";
 		for(var key in columns){
-			alert(key);
 			if(key=="id") continue;
-			headerStr += key + ",";
+			headerStr += key + ","; 
 			colTypeStr += "ro,";
 		}
 		headerStr = headerStr.substr(0, headerStr.length-1);
@@ -154,12 +152,15 @@ function queryResult(res){
 		queryGrid.init();
 		queryGrid.parse({data:res.list},"js");
 		//console.log(res);
+		
+	
+		
 	}
 }
 
 dhtmlxEvent(window,"load",function(){
 	bodyLayout = new dhtmlXLayoutObject(document.body,"3L");
-	bodyLayout.attachFooter("footDiv");
+	logDiv = bodyLayout.attachFooter("footDiv");
 	aLay = bodyLayout.cells("a");
 	aLay.setWidth(300);
 	aLay.setText("Connection Info List");
@@ -208,7 +209,7 @@ dhtmlxEvent(window,"load",function(){
 	sqlForm.attachEvent("onButtonClick",function(name){
 		
 		var sendSQL = sqlForm.getItemValue("sqlTa");
-		var au = new AjaxUtil("${root}/connection/sendSql/" + sendSQL,null,"get");
+		var au = new AjaxUtil("${root}/connection/sendSql/" + sendSQL,null,"POST");
 		au.send(queryResult); 
 		
 	})

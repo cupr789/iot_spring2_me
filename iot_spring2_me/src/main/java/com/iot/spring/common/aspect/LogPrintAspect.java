@@ -43,10 +43,9 @@ public class LogPrintAspect {
 			log.info("정상진행? =>{}",obj);
 		} catch (Throwable e) {
 			log.error("@Around error=>{}",e);
-			ModelAndView mav = new ModelAndView();
-			mav.addObject("errorMsg",ntDao.getText(e.getMessage()));
-			log.error("mav???? =>{}",mav);
-			return mav;
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("errorMsg",ntDao.getText(e.getMessage()));
+			return map;
 		}
 		log.info("@Around end, RunTime : {} ms",System.currentTimeMillis()-startTime);
 		return obj;
