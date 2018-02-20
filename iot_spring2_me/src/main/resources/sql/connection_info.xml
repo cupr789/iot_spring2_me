@@ -53,4 +53,13 @@
 	<select id="excuteAnySql" resultType="map"  parameterType="map">
 		${sql}
 	</select>
+	
+	<update id="excuteUpdate" parameterType="map">
+		${sql} 
+	</update>
+	
+	<select id="selectTableDatas" resultType="map" parameterType="map">
+		select * from ${tableName}
+	</select>
+	
 </mapper>  

@@ -15,5 +15,6 @@
 	</typeAliases>
 	<mappers>
 		<mapper resource="sql/connection_info.xml"/>
+		<mapper resource="sql/sql_info.xml"/>
 	</mappers>
 </configuration>

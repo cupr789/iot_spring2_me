@@ -91,9 +91,14 @@ public class ConnectionInfoController {
 		pMap.put("dbName", dbName);
 		pMap.put("tableName", tableName);
 		List<ColumnVO> columnList = cis.getColumnList(hs, pMap);
+		List<Object> tableDataList = cis.getTableDatas(hs, pMap);
+		log.info("tableDataList =>{}",tableDataList);
 		map.put("list", columnList);
+		map.put("tdlist",tableDataList);
 		return map;
 	}
+	
+	
 	@RequestMapping(value="/columns", method=RequestMethod.GET)
 	public @ResponseBody Map<String,Object> getColumnList(Map<String,Object> map) {
 		//cis.getColumnList(hs, map)
@@ -101,7 +106,7 @@ public class ConnectionInfoController {
 	}
 	
 	
-	@RequestMapping(value="/sendSql/{sendSQL}", method=RequestMethod.POST)
+/*	@RequestMapping(value="/sendSql/{sendSQL}", method=RequestMethod.POST)
 	public @ResponseBody Map<String,Object> getSqlResult(
 			@PathVariable("sendSQL")String sendSQL,
 			HttpSession hs,
@@ -112,11 +117,11 @@ public class ConnectionInfoController {
 		
 		List<Object> excuteResult = cis.getSqlResultList(hs, sendSQL);  // delete from user_info where uiNo=3;
 																		// update user_info set uiName='ㅋ카' where uiName='홍길동';
-/*		if(sendSQL.indexOf("delete")!=-1 || sendSQL.indexOf("update")!=-1) {
+		if(sendSQL.indexOf("delete")!=-1 || sendSQL.indexOf("update")!=-1) {
 			excuteResult = cis.getSqlResultList(hs, "select * from ");
-		}*/
+		}
 		map.put("list", excuteResult);
 		return map;
-	}
+	}*/
 
 }

@@ -71,13 +71,31 @@ public class ConnectionInfoDAOImpl implements ConnectionInfoDAO {
 	public List<ColumnVO> selectColumnList(SqlSession ss,Map<String,String> map) {
 		return ss.selectList("connection_info.selectColumn",map);
 	}
+	
+	
 	@Override
 	public List<Object> excuteAnySql(SqlSession ss, String sql) {
 		System.out.println("질의문을 시작하기전!!!!!! 받아온 sql 제대로 왓니?? "+sql);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("sql", sql);
 		List<Object> list = ss.selectList("connection_info.excuteAnySql", map);
-		System.out.println("??????   "+list);
+		int result=0;
+		if(sql.indexOf("update")!=-1) {
+			System.out.println("들어왓어!?!?!?!?!?!?!?");
+			result = ss.update("connection_info.excuteUpdate",map);		
+			System.out.println("update 된 갯수: "+result);
+		}
+		
+		System.out.println("??????   "+list.size());
+		return list;
+	}
+	
+	
+	@Override
+	public List<Object> selectTableDatas(SqlSession ss, Map<String, String> map) {
+		System.out.println(map.get("tableName"));
+		List<Object> list = ss.selectList("connection_info.selectTableDatas", map);
+		System.out.println(list.get(0));
 		return list;
 	}
 
