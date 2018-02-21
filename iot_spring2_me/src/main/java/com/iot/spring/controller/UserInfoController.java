@@ -41,14 +41,14 @@ public class UserInfoController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> join(@RequestBody UserInfoVO ui){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("msg", "회원가입 실패 임마~");
+		map.put("msg", "회원가입 실패");
 		map.put("biz", false);
 		int result = uis.join(ui);
 		if(result==1) {
-			map.put("msg", "회원가입 성공 임마~");
+			map.put("msg", "회원가입 성공");
 			map.put("biz", true);
 		}else if(result==2) {
-			map.put("msg", "아이디 중복 임마~");
+			map.put("msg", "아이디 중복");
 		}
 		return map;
 	}
@@ -57,11 +57,11 @@ public class UserInfoController {
 	public @ResponseBody Map<String, Object> join2(@PathVariable String uiId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		log.info("insertUI=>{}",uiId);
-		map.put("msg", "아이디 중복 임마~");
+		map.put("msg", "중복된 아이디가 있습니다.");
 		map.put("biz", false);
 		if(uis.checkUserId(uiId)==0) {
-			map.put("msg", "없는 아이디");
-			map.put("biz", true);
+			map.put("msg", "사용가능한 아이디 입니다.");
+			map.put("biz", false);
 		}
 		return map;
 	}
