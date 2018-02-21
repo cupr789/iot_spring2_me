@@ -50,7 +50,9 @@ public class ConnectionInfoServiceImpl implements ConnectionInfoService{
 
 	@Override
 	public void insertConnectionInfo(Map<String, Object> rMap, ConnectionInfoVO ci) {
+		
 		int result = cidao.insertConnectionInfo(ci);
+		System.out.println(result+"                   ??????");
 		rMap.put("msg", "저장이 실패하였습니다.");
 		if(result==1) {
 			rMap.put("msg", "저장이 성공하였습니다.");

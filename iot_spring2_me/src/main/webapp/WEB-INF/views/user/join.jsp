@@ -29,6 +29,8 @@
 					{type: "block", blockOffset: 0, list: [
 						{type: "button", name:"checkBtn",value: "아이디 중복체크"},
 						{type: "newcolumn"},
+						{type: "button", name:"joinBtn",value: "가입완료"},
+						{type: "newcolumn"},
 						{type: "button", name:"cancelBtn",value: "취소"},
 						{type: "newcolumn"},
 						{type: "button", name:"backBtn",value: "돌아가기"}
@@ -46,6 +48,11 @@
 				form.clear();
 			}else if(id=="backBtn"){
 				location.href="${pPath}/user/login";
+			}else if(id=="checkBtn"){
+				
+				var uiId = form.getItemValue("uiId");
+				var aud = new AjaxUtilDx("${root}/user/check/"+uiId,form);
+				aud.send(callback); 
 			}
 		});
 	});

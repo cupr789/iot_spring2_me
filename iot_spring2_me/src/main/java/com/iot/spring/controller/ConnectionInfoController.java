@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.iot.spring.service.ConnectionInfoService;
@@ -27,6 +29,7 @@ import com.iot.spring.vo.UserInfoVO;
 @RequestMapping("/connection")
 public class ConnectionInfoController {
 	private static final Logger log = LoggerFactory.getLogger(UrlController.class);
+	private ObjectMapper om = new ObjectMapper();
 	@Autowired
 	private ConnectionInfoService cis;
 	@RequestMapping("/list")
@@ -59,11 +62,20 @@ public class ConnectionInfoController {
 	}
 
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
-	public @ResponseBody Map<String,Object> insertConnectionInfo(@Valid ConnectionInfoVO ci, Map<String,Object> map) {
-		log.info("ci=>{}",ci);
-		cis.insertConnectionInfo(map, ci);
+	public @ResponseBody Map<String,Object> insertConnectionInfo(HttpSession hs ,@RequestParam Map<String,Object> map) {
+		ConnectionInfoVO ci = om.convertValue(map, ConnectionInfoVO.class);
+		if(hs.getAttribute("user")!=null) {
+			ci.setUiId(hs.getAttribute("user").toString());
+			log.info("ci=>{}",ci);
+			cis.insertConnectionInfo(map, ci);
+		}else {
+			map.put("errorMsg", "처음부터 다시해주세요");
+		}
+		
 		return map;
 	}
+	
+	
 	@RequestMapping(value="/tables/{dbName}/{parentId}", method=RequestMethod.GET)
 	public @ResponseBody Map<String,Object> getTabeList(
 			@PathVariable("dbName")String dbName,
@@ -105,23 +117,5 @@ public class ConnectionInfoController {
 		return map;
 	}
 	
-	
-/*	@RequestMapping(value="/sendSql/{sendSQL}", method=RequestMethod.POST)
-	public @ResponseBody Map<String,Object> getSqlResult(
-			@PathVariable("sendSQL")String sendSQL,
-			HttpSession hs,
-			Map<String,Object> map) {
-		if(sendSQL!=null) {
-			log.info("받아온 질의문이 뭐야?? =>{}",sendSQL);
-		}
-		
-		List<Object> excuteResult = cis.getSqlResultList(hs, sendSQL);  // delete from user_info where uiNo=3;
-																		// update user_info set uiName='ㅋ카' where uiName='홍길동';
-		if(sendSQL.indexOf("delete")!=-1 || sendSQL.indexOf("update")!=-1) {
-			excuteResult = cis.getSqlResultList(hs, "select * from ");
-		}
-		map.put("list", excuteResult);
-		return map;
-	}*/
 
 }

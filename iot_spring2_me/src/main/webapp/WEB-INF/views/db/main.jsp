@@ -46,6 +46,7 @@ var bTabs, bTab1, bTab2, bTab3;
 var cTabs;
 var tableInfoGrid;
 var logDiv;
+var forDelTag = /<\/?\w+>/gi;
 function columnListCB(res){
 	if(res.errorMsg){
 		alert(res.errorMsg);
@@ -133,9 +134,15 @@ function tableListCB(res){
 	}
 	dbTree.openItem(parentId);
 }
-function addConnectionCB(res){
-	console.log(res);
+
+
+function addConnectionCB(loader,res){
+	var res = JSON.parse(res);
+	alert(res.msg);
 }
+
+
+
 function dbListCB(res){
 	if(res.error){
 		alert(res.error);
@@ -151,17 +158,16 @@ function dbListCB(res){
 }
 
 
-function queryResult(xhr,res){
-	res = JSON.parse(res);
+function queryResult(res){
 	
 	
 	if(res.errorMsg){
 		alert(res.errorMsg);
 	}
+	
+	
 	if(res.list[0]){	
-		
 		cTabs = cLay.attachTabbar();
-		
 		for(var idx in res.list){
 			cTabs.addTab("a"+idx,"result",null,null,false,true);
 			queryGrid = cTabs.tabs("a"+idx).attachGrid();
@@ -169,44 +175,27 @@ function queryResult(xhr,res){
 			var columns = res.list[idx][0];
 			var headerStr = "";
 			var colTypeStr = "";
+			var headerStyle=[];
 			for(var key in columns){
 				if(key=="id") continue;
 				headerStr += key + ","; 
 				colTypeStr += "ro,";
+				headerStyle.push("color:skyblue;");
 			}
 			headerStr = headerStr.substr(0, headerStr.length-1);
 			colTypeStr = colTypeStr.substr(0, colTypeStr.length-1);
 			queryGrid.setColumnIds(headerStr);
-			queryGrid.setHeader(headerStr);
+			queryGrid.setHeader(headerStr,null,headerStyle);
 			queryGrid.setColTypes(colTypeStr);
 			queryGrid.init();
 			queryGrid.parse({data:res.list[idx]},"js");
-			
-		}
-		
-/* 		queryGrid = cTabs.tabs("a"+0).attachGrid();
-		//queryGrid = cLay.attachGrid();
-		var columns = res.list[0][0];
-		var headerStr = "";
-		var colTypeStr = "";
-		for(var key in columns){
-			if(key=="id") continue;
-			headerStr += key + ","; 
-			colTypeStr += "ro,";
-		}
-		headerStr = headerStr.substr(0, headerStr.length-1);
-		colTypeStr = colTypeStr.substr(0, colTypeStr.length-1);
-		queryGrid.setColumnIds(headerStr);
-		queryGrid.setHeader(headerStr);
-		queryGrid.setColTypes(colTypeStr);
-		queryGrid.init();
-		queryGrid.parse({data:res.list[0]},"js"); */
-		for(var idd=0;idd<2;idd++){
-			document.getElementById("inDiv").innerHTML += "<br>"+res.strSql[idd]+"<br>"+"Affected rows: "+res.effectCnt+" 찾은 행: "+res.listCnt+"<br>";
-		}
+		}		
 	}
-		
-		
+	for(var index in res.strSql){
+		document.getElementById("inDiv").innerHTML +="실행한 쿼리: "+res.strSql[index]+"<br>Effected rows : "+res.effectCnt[index]+" 찾은 행: "+res.listCnt[index]+" 지속시간 : "+(res.excuteTime*0.001)+"sec"+"<br>";
+	}
+	
+	
 	
 }
 
@@ -255,17 +244,38 @@ dhtmlxEvent(window,"load",function(){
 	];
 	
 	
-	var sqlForm = bTabs.tabs("sql").attachForm(sqlFormObj);
+	var sqlForm = bTabs.tabs("sql").attachEditor();
 	
 	
-	sqlForm.attachEvent("onButtonClick",function(name){
+/* 	sqlForm.attachEvent("onButtonClick",function(name){
 		
 		var sendSQL = sqlForm.getItemValue("sqlTa");
 		//var au = new AjaxUtil("${root}/sql/sendSql/" + sendSQL,null,"POST");
 		
 		sqlForm.send("${root}/sql/sendSql","POST",queryResult);
 		
+	}) */
+	sqlForm.attachEvent("onAccess",function(evName,evObj){
+		 if(evName=="keydown"){
+		
+				if(evObj.which==120 && evObj.ctrlKey){
+					var sendSQL = sqlForm.getContent().replace(forDelTag," ");
+					alert(sendSQL);
+					var au = new AjaxUtilCustom("${root}/sql/sendSql",sendSQL);
+					au.send(queryResult);
+				}
+				//sqlForm.send("${root}/sql/sendSql","POST",queryResult);
+				/* var sendSQL = sqlForm.getContent();
+				alert(sendSQL); */
+				/* var au = new AjaxUtil("${root}/sql/sendSql/" + sendSQL,null,"POST");
+				au.send(queryResult); */
+			
+		} 
+		
+		
 	})
+	
+	
 	
 	cLay = bodyLayout.cells("c");
 	
@@ -279,7 +289,7 @@ dhtmlxEvent(window,"load",function(){
 				{type:"input",name:"ciUrl", label:"접속URL",required:true},
 				{type:"input",name:"ciPort", label:"PORT번호",validate:"ValidInteger",required:true},
 				{type:"input",name:"ciDatabase", label:"데이터베이스",required:true},
-				{type:"input",name:"ciUser", label:"유저ID",required:true},
+				{type:"input",name:"ciUser", label:"사용자ID",required:true},
 				{type:"password",name:"ciPwd", label:"비밀번호",required:true},
 				{type:"input",name:"ciEtc", label:"설명"},
 				{type: "block", blockOffset: 0, list: [

@@ -26,14 +26,18 @@ public class UserInfoController {
 	private UserInfoService uis;
 	
 	private static final Logger log = LoggerFactory.getLogger(UserInfoController.class);
+	
+	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> login( UserInfoVO ui, HttpSession hs){
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(uis.login(map, ui)) {
-			hs.setAttribute("user", map.get("user"));
+			hs.setAttribute("user", map.get("user")); 
 		}
 		return map;
 	}
+	
+	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> join(@RequestBody UserInfoVO ui){
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -49,7 +53,7 @@ public class UserInfoController {
 		return map;
 	}
 
-	@RequestMapping(value="/check/{uiId}", method=RequestMethod.GET)
+	@RequestMapping(value="/check/{uiId}", method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> join2(@PathVariable String uiId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		log.info("insertUI=>{}",uiId);
